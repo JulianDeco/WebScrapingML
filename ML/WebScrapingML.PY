@@ -12,6 +12,9 @@ import operator
 from openpyxl import load_workbook, Workbook
 from openpyxl.worksheet.dimensions import ColumnDimension
 
+#Importamos la función para crear logs
+from crear_logs import crear_log
+
 search = input('Introduzca lo que quiera buscar: ')
 #URL donde solicitamos el html
 url = requests.get(f'https://listado.mercadolibre.com.ar/{search}')
@@ -97,6 +100,9 @@ ws.column_dimensions['B'].width = 30
 
 #Guardamos el archivo
 wb.save(file)
+
+crear_log(len(diccionario_datos_ordenados), search)
+
 
 if __name__ == '__main__':
     print('Busqueda finalizada y ejecutada con éxito')
