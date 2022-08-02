@@ -99,7 +99,7 @@ ws.column_dimensions['B'].width = 30
 wb.save(file)
 
 if __name__ == '__main__':
-    print('En funcionamiento')
+    print('Busqueda finalizada y ejecutada con éxito')
     #Imprimimos el diccinario por prueba
     # for a in diccionario_datos_ordenados:
     #     print(a)
