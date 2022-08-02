@@ -4,19 +4,17 @@ import os
 from bs4 import BeautifulSoup
 import requests
 import time
-import webbrowser
 
 #Necesario para ordenar el diccionario
 import operator
 
 #Necesario para manejar hoja de calculo
 from openpyxl import load_workbook, Workbook
+from openpyxl.worksheet.dimensions import ColumnDimension
 
-#Creamos un txt donde guardar una variable
-archi1=open("datos.txt","w") 
-
+search = input('Introduzca lo que quiera buscar: ')
 #URL donde solicitamos el html
-url = requests.get("https://listado.mercadolibre.com.ar/mouse")
+url = requests.get(f'https://listado.mercadolibre.com.ar/{search}')
 soup = BeautifulSoup(url.content, "html.parser")
 
 #Variables donde almacenamos los datos que necesitamos
@@ -53,9 +51,9 @@ else:
     wb = Workbook()
     
     #Creamos el archivo
+    ws = wb.active    
+    ws.title = 'ARTICULOS Y PRECIOS'
     wb.save('precios_ml.xlsx')
-    
-    
     print('Archivo creado')
 
 #Nombre archivo
@@ -67,22 +65,35 @@ wb = load_workbook(file)
 #Usamos el archivo abierto
 ws = wb.active    
 
+
+
 # #Creamos la hoja, con el 0 indicamos que se cree primero
-ws.title = 'ARTICULOS Y PRECIOS'
-    
+
+
+sheet = input("Nombre de la página a crear: ")
+ws = wb.create_sheet(f'{sheet}',0)    
 
 
 #Creamos las columnas
 ws['A1'] = 'ARTICULO'
 ws['B1'] = 'PRECIO'
 
-#Bucle para escribir la hoja
 cont = 2
+#Bucle para escribir la hoja
 for art_precios in diccionario_datos_ordenados:
-
+    
     ws[f'A{cont}'] = art_precios[0]
     ws[f'B{cont}'] = art_precios[1]
+    
+    ws[f'B{cont}'].number_format = '_-[$$-es-AR] * #,##0.00_-;-[$$-es-AR] * #,##0.00_-;_-[$$-es-AR] * "-"??_-;_-@_-' 
+    
     cont += 1
+    
+ws.column_dimensions['A'].width = 90
+ws.column_dimensions['B'].width = 30    
+
+    
+
 
 #Guardamos el archivo
 wb.save(file)
