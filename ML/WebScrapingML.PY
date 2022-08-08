@@ -20,29 +20,30 @@ search = input('Introduzca lo que quiera buscar: ')
 url = requests.get(f'https://listado.mercadolibre.com.ar/{search}')
 soup = BeautifulSoup(url.content, "html.parser")
 
-#Variables donde almacenamos los datos que necesitamos
-resultados_titulos = soup.findAll('h2', {'class':'ui-search-item__title'})
-resultados_precios = soup.findAll('span', {'class':'price-tag-fraction'})
 
+# Variables donde almacenamos los datos que necesitamos
+resultados_titulos = soup.findAll('h2', {'class':'ui-search-item__title'})
+# resultados_precios = soup.findAll('span', {'class':'price-tag-text-sr-only'})
+resultados_precios = soup.findAll('div', {'class':'ui-search-price__second-line'})
 #Creacion diccionario
 diccionario_datos = {}
-
 #Bucle FOR para obtener resultados de a uno y trabajarlos individualmente
 #tambien almacenamos los datos en un diccionario
-for i in range(0,(len(resultados_titulos))):
+for i in range(0,(len(resultados_precios))):
+    
+    res_precios_texto = resultados_precios[i].text
+    res_precios_texto_sin_coma = res_precios_texto.split()
+    
     res_titulos_texto = resultados_titulos[i]
-    res_precios_texto = resultados_precios[i]
     
-    res_precios_sin_coma = res_precios_texto.text
-    res_precios_texto_sin_coma = int(res_precios_sin_coma.replace('.', '')) 
-    
-    diccionario_datos[res_titulos_texto.text] = res_precios_texto_sin_coma
-    
+    diccionario_datos[res_titulos_texto.text] = int(res_precios_texto_sin_coma[0])
+
+
 #Ordenamos el diccionario de menor a mayor en relacion a la key
 #Esto nos devuelve una lista
 diccionario_datos_ordenados = sorted(diccionario_datos.items(), key=operator.itemgetter(1))
 
-
+print(diccionario_datos_ordenados)
 
 #Comprobamos si existe el archivo
 if os.path.exists('precios_ml.xlsx'):
